@@ -1,9 +1,19 @@
-import { FieldInputProps, Form, Formik, useField, useFormikContext } from 'formik';
+import { Field, Form, Formik, useField, useFormikContext } from 'formik';
 import React, { useRef, useState } from 'react';
 import './App.css';
 import './tailwind.css'
 
-const InlineEditableForm = ({ children }: { children: (props: { isEditing: boolean, setIsEditing: React.Dispatch<React.SetStateAction<boolean>>, fieldProps: FieldInputProps<string> }) => React.ReactNode }) => {
+interface InlineEditableFormProps<T> {
+  name: string
+  children: (props: {
+    isEditing: boolean,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
+    value: T
+    name: string
+  }) => React.ReactNode
+}
+
+const InlineEditableForm = <T extends any>({ name, children }: InlineEditableFormProps<T>) => {
   // the state controlling edit mode vs read mode
   const [isEditing, setIsEditing] = useState(false)
 
@@ -11,7 +21,7 @@ const InlineEditableForm = ({ children }: { children: (props: { isEditing: boole
   const formRef = useRef<HTMLFormElement>(null)
 
   const formik = useFormikContext()
-  const [fieldProps] = useField<string>("value")
+  const [{ value }] = useField<T>(name)
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // when submitting the editing is over, go back to read mode
     setIsEditing(false)
@@ -40,7 +50,7 @@ const InlineEditableForm = ({ children }: { children: (props: { isEditing: boole
   return (
     <Form ref={formRef} onKeyDown={handleKeyDown} onSubmit={handleSubmit} onReset={handleReset} onBlur={handleBlur}>
       {/** pass some convenient methods to the children using render props */}
-      {children({ isEditing, setIsEditing, fieldProps })}
+      {children({ isEditing, setIsEditing, value, name })}
     </Form>
   )
 }
@@ -55,21 +65,36 @@ function App() {
       <div>
         <h2 className="leading-6 text-2xl font-semibold">Inline Editable Field</h2>
         {/** once we submitted the content of the field (using enter or the submit button), we want to save these values as new initialValues! */}
-        <Formik initialValues={{ value: "Initial text" }} onSubmit={(data, actions) => actions.resetForm({ values: data })}>
+        <Formik
+          initialValues={{ value: "Initial text" }}
+          onSubmit={(data, actions) => actions.resetForm({ values: data })}
+        >
           <div className="w-96 mt-20">
-            <InlineEditableForm>
-              {({ isEditing, setIsEditing, fieldProps }) => isEditing ? (
+            <InlineEditableForm<string> name="value">
+              {({ isEditing, setIsEditing, value }) => isEditing ? (
                 <span>
-                  <input autoFocus name={fieldProps.name} value={fieldProps.value} onChange={fieldProps.onChange} onBlur={fieldProps.onBlur} type="text" className="py-2 px-1.5 text-sm border-2 border-blue-700 rounded-md" />
+                  <Field
+                    name="value"
+                    autoFocus
+                    type="text"
+                    className="py-2 px-1.5 text-sm border-2 border-blue-700 rounded-md"
+                  />
                   <span className="mx-2 space-x-1">
-                    {/** if you want hide these buttons but don't remove them */}
+                    {/** if you want, you can hide these buttons but don't remove them */}
                     {/** [ENTER] triggers the submit button automatically */}
                     <button className="bg-gray-200 rounded text-sm px-1 py-1" type="submit">Submit</button>
                     <button className="bg-gray-200 rounded text-sm px-1 py-1" type="reset">Reset</button>
                   </span>
                 </span>
               ) :
-                <button type="button" onFocus={()=>setIsEditing(true)} onClick={() => setIsEditing(true)} className="cursor-text hover:bg-gray-100 px-1.5 py-2 rounded-md">{fieldProps.value}</button>
+                <button
+                  type="button"
+                  onFocus={() => setIsEditing(true)}
+                  onClick={() => setIsEditing(true)}
+                  className="cursor-text hover:bg-gray-100 px-1.5 py-2 rounded-md"
+                >
+                  {value}
+                </button>
               }
             </InlineEditableForm>
           </div>
