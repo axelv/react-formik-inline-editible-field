@@ -4,9 +4,14 @@ This repo contains a **headless** component wrapping the [**Formik**](https://fo
 
 *Why?* - I had a hard time to find a simple, elegant hand headlesss implementation, and decided to build a component myself.
 
+## ▶️ Demo
+
+![Demo gif of inline editable field](demo.gif)
+
+## How can I use this?
 Take a look at `<InlineEditableForm/>` [src/App.tsx](src/App.tsx) for to exact component.
 
-⭐️ Main Features ⭐️:
+## ⭐️ Main Features ⭐️:
 
 - ✅ Headless form component
 - ✅ Keyboard (Tab, Enter, Esc) and mouse interaction
