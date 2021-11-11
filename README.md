@@ -13,7 +13,7 @@ Take a look at `<InlineEditableForm/>` [src/App.tsx](src/App.tsx) for to exact c
 
 ## ⭐️ Main Features ⭐️:
 
-- ✅ Headless form component
+- ✅ Headless form component, use your own styling
 - ✅ Keyboard (Tab, Enter, Esc) and mouse interaction
 - ✅ Autosubmit on blur
-- ✅  Works with Formik
+- ✅ Works with Formik
