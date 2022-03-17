@@ -41,7 +41,7 @@ const InlineEditableForm = <T extends any>({ name, children }: InlineEditableFor
 
   // when loosing focus => submit the form using the native reset of the HTML form
   const handleBlur = (event: React.FocusEvent<HTMLFormElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget as HTMLElement)) {
+    if (!formRef.current.contains(event.relatedTarget as HTMLElement)) {
       // Not triggered when swapping focus between children
       formRef.current?.requestSubmit();
     }
